@@ -1,0 +1,33 @@
+Glassfish 安装
+
+下载Glassfish 4，使用：glassfish4\glassfish\bin asadmin start-domain 指令进行安装，配置环境变量
+
+Maven安装
+
+下载maven 3.5.0，安装并配置环境变量
+
+搭建Webservice实例过程
+
+1、在github上下载一个小实例，包含服务器端，并解压；
+
+2、根据小实例中的步骤进行部署：
+
+	（1）创建顶层依赖：mvn clean install -pl "test-utils,util" -am
+
+	（2）定位到想要作为一个WebService服务的代码文件下，并输入命令：mvn package -Dmaven.test.skip=true 
+
+	（3） 执行（2）后，该文件夹会生成一个target文件夹，找到以war结尾的文件，如：jaxws-endpoint.war ，该文件就是我们需要部署在Glassfish上的文件。
+
+	（4）部署方式：
+
+	        a、可以直接在glassfish管理控制台进行控制，在浏览器中输入http://localhost:4848，点击左侧菜单栏中的 Applications，在列表中可以看到已经部署的应用，如要部署新应用，点击deploy按钮，选择本地的war，设定好context；
+
+	        b、通过命令asadmin deploy部署应用, 另外 asadmin updeploy 卸载应用。通过asadmin deploy --help 和 asadmin undeploy --help 获得更多帮助；
+
+	        c、可以直接将war或ear放在glassfish/domain/autodeploy目录下，glassfish启动后会自动部署。
+
+	（5）部署好后，点击部署的应用，找到相应的WSDL文件，并下载下来
+
+	（6）下载下来的是xml文件，将该xml文件转化为可编译文件，指令：wsimport -d . EBookStoreImplService.xml -Xnocompile
+
+	（7）将（6）产生的org文件夹直接拖到新建的maven项目的 main -> java 中，在pom.xml文件中加入该服务所依赖的jar包的xml代码，就可以直接使用该服务。（在 maven repository 中查找）
